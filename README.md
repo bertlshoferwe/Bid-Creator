@@ -74,35 +74,10 @@ npm start
 
 
 
-Usage
-
-View Bids:
-
-Open the app to see a list of bids with SO# and Homeowner details.
-Bids update in real-time as changes occur in Firestore.
-
-
-Download PDF:
-
-Click the blue "Download PDF" button next to a bid.
-Generates a PDF with a gradient header, structured sections, and print-ready formatting.
-File names follow the format Bid_HomeownerName_SONumber.pdf.
-
-
-
-Project Structure
-bid-management-app/
-├── src/
-│   ├── BidsList.jsx       # Displays bid list
-│   ├── utils.js           # PDF generation and filename sanitization
-│   ├── firebase.js        # Firebase/Firestore configuration
-│   ├── App.jsx            # Main app component
-│   └── index.js           # Entry point
-├── package.json           # Dependencies and scripts
-└── README.md              # Project documentation
-
-
 BidsList.jsx: React component for listing bids, fetching from Firestore, downloading PDFs, and deleting bids.
+
 utils.js: Generates PDF bid sheets using jsPDF with a gradient header, colored text, and structured layout.
+
 BidsList.css: CSS for styling the bid list and buttons (blue download, red delete).
+
 firebase.js: Initializes Firebase and exports Firestore instance.
