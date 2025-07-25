@@ -1,14 +1,36 @@
 import jsPDF from "jspdf";
 
-export function sanitizeFilename(str) {
+// Capitalize first letter of each word
+export function capitalize(str) {
+  if (!str) return "";
   return str
-    .replace(/[^a-zA-Z0-9\s-_]/g, "")
-    .replace(/\s+/g, "_")
-    .slice(0, 50);
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
 }
 
+// Generate section key for accordion and editing state
+export function getSectionKey(category, sectionTitle) {
+  return `${category}-${sectionTitle}`;
+}
+
+// Sanitize filename to remove invalid characters
+export function sanitizeFilename(filename) {
+  return filename
+    .replace(/[^a-zA-Z0-9_\-\.]/g, "_") // Replace invalid chars with underscore
+    .replace(/_+/g, "_") // Collapse multiple underscores
+    .replace(/^_|_$/g, ""); // Remove leading/trailing underscores
+}
+
+// Generate PDF from subcategories data
 export function generatePDF(subcategories, soNumber, homeownerName) {
   console.log("generatePDF Input:", { subcategories, soNumber, homeownerName }); // Debug log
+
+  // Validate input
+  if (!subcategories || typeof subcategories !== "object") {
+    console.error("Invalid subcategories: must be an object");
+    throw new Error("Invalid subcategories data");
+  }
 
   const doc = new jsPDF({
     orientation: "portrait",
@@ -80,11 +102,16 @@ export function generatePDF(subcategories, soNumber, homeownerName) {
   // Helper to calculate item height
   const calculateItemHeight = (item, width) => {
     if (!item || !item.label) return 0;
-    let itemText = `${item.label}: ${item.value || ""}`;
-    if (item.qty) itemText += ` (Qty: ${item.qty})`;
-    if (item.hand) itemText += ` (${item.hand})`;
+    let itemText = item.value ? `${item.label}: ${item.value}` : item.label;
+    if (item.qty && item.qty !== "") itemText += ` (Qty: ${item.qty})`;
+    if (item.hand && item.hand !== "") itemText += ` (${item.hand})`;
     if (item.label === "Shower Size") {
-      itemText = `${item.label}: L: ${item.length || ""}, W: ${item.width || ""}, H: ${item.height || ""}`;
+      const dimensions = [
+        item.length ? `L: ${item.length}` : "",
+        item.width ? `W: ${item.width}` : "",
+        item.height ? `H: ${item.height}` : "",
+      ].filter(Boolean).join(", ");
+      itemText = dimensions ? `${item.label}: ${dimensions}` : item.label;
     }
     const splitText = doc.splitTextToSize(itemText, width);
     return splitText.length * (itemFontSize * 0.5) + 8; // 8pt spacing
@@ -132,11 +159,16 @@ export function generatePDF(subcategories, soNumber, homeownerName) {
       let maxItemHeight = 0;
 
       if (leftItem) {
-        let itemText = `${leftItem.label}: ${leftItem.value || ""}`;
-        if (leftItem.qty) itemText += ` (Qty: ${leftItem.qty})`;
-        if (leftItem.hand) itemText += ` (${leftItem.hand})`;
+        let itemText = leftItem.value ? `${leftItem.label}: ${leftItem.value}` : leftItem.label;
+        if (leftItem.qty && leftItem.qty !== "") itemText += ` (Qty: ${leftItem.qty})`;
+        if (leftItem.hand && leftItem.hand !== "") itemText += ` (${leftItem.hand})`;
         if (leftItem.label === "Shower Size") {
-          itemText = `${leftItem.label}: L: ${leftItem.length || ""}, W: ${leftItem.width || ""}, H: ${leftItem.height || ""}`;
+          const dimensions = [
+            leftItem.length ? `L: ${leftItem.length}` : "",
+            leftItem.width ? `W: ${leftItem.width}` : "",
+            leftItem.height ? `H: ${leftItem.height}` : "",
+          ].filter(Boolean).join(", ");
+          itemText = dimensions ? `${leftItem.label}: ${dimensions}` : leftItem.label;
         }
         const splitText = doc.splitTextToSize(itemText, itemColWidth - 15);
         doc.setFontSize(itemFontSize);
@@ -150,11 +182,16 @@ export function generatePDF(subcategories, soNumber, homeownerName) {
       }
 
       if (rightItem) {
-        let itemText = `${rightItem.label}: ${rightItem.value || ""}`;
-        if (rightItem.qty) itemText += ` (Qty: ${rightItem.qty})`;
-        if (rightItem.hand) itemText += ` (${rightItem.hand})`;
+        let itemText = rightItem.value ? `${rightItem.label}: ${rightItem.value}` : rightItem.label;
+        if (rightItem.qty && rightItem.qty !== "") itemText += ` (Qty: ${rightItem.qty})`;
+        if (rightItem.hand && rightItem.hand !== "") itemText += ` (${rightItem.hand})`;
         if (rightItem.label === "Shower Size") {
-          itemText = `${rightItem.label}: L: ${rightItem.length || ""}, W: ${rightItem.width || ""}, H: ${rightItem.height || ""}`;
+          const dimensions = [
+            rightItem.length ? `L: ${rightItem.length}` : "",
+            rightItem.width ? `W: ${rightItem.width}` : "",
+            rightItem.height ? `H: ${rightItem.height}` : "",
+          ].filter(Boolean).join(", ");
+          itemText = dimensions ? `${rightItem.label}: ${dimensions}` : rightItem.label;
         }
         const splitText = doc.splitTextToSize(itemText, itemColWidth - 15);
         doc.setFontSize(itemFontSize);
@@ -209,17 +246,27 @@ export function generatePDF(subcategories, soNumber, homeownerName) {
 
   // Process subcategories
   const categories = Object.keys(subcategories || {});
-  for (const category of categories) {
-    const categoryHeight = categoryFontSize * 0.5 + 15;
-    checkY(categoryHeight);
-    addText(category, col1X, categoryFontSize, true, contentWidth, categoryTextColor);
-    y += 15;
+  if (categories.length === 0) {
+    console.warn("No categories found in subcategories");
+    addText("No data available", col1X, sectionFontSize, false, contentWidth, sectionTextColor);
+  } else {
+    for (const category of categories) {
+      const categoryHeight = categoryFontSize * 0.5 + 15;
+      checkY(categoryHeight);
+      addText(category, col1X, categoryFontSize, true, contentWidth, categoryTextColor);
+      y += 15;
 
-    const sections = Array.isArray(subcategories[category]) ? subcategories[category] : [];
-    for (const section of sections) {
-      renderSection(section);
+      const sections = Array.isArray(subcategories[category]) ? subcategories[category] : [];
+      if (sections.length === 0) {
+        addText("No sections available", col1X, sectionFontSize, false, contentWidth, sectionTextColor);
+        y += 20;
+      } else {
+        for (const section of sections) {
+          renderSection(section);
+        }
+      }
+      y += 15;
     }
-    y += 15;
   }
 
   // Add page numbers
