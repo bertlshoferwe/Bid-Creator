@@ -52,17 +52,15 @@ function BidSheetForm() {
     handleSaveAndDownload,
   } = useBidSheetForm();
 
-  console.log("BidSheetForm subcategories:", subcategories); // Debug
   const currentCategory = ["Contact", "Kitchen", "Bathroom", "Utility", "Outdoor"][tab];
   const currentCategoryData = subcategories.find((cat) => cat.category === currentCategory)?.sections || [];
-  console.log(`Rendering ${currentCategory} with sections:`, currentCategoryData); // Debug
 
   return (
     <Box sx={{ backgroundColor: "background.default", minHeight: "100vh", py: 4 }}>
       <Box
         sx={{
           maxWidth: 800,
-          backgroundColor: "white",
+          backgroundColor: "background.card",
           mx: "auto",
           px: 2,
           pt: 4,

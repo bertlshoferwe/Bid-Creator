@@ -1,24 +1,16 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import { AppBar, Toolbar, Typography, Button, CssBaseline, createTheme, ThemeProvider } from "@mui/material";
+import { AppBar, Toolbar, Typography, Button, CssBaseline, IconButton, ThemeProvider } from "@mui/material";
 import FormatListNumberedRtlIcon from '@mui/icons-material/FormatListNumberedRtl';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import BidSheetForm from "./BidSheetForm";
 import BidsList from "./BidsList";
+import lightTheme from "./Themes/lightTheme";
+import darkTheme from "./Themes/darkTheme";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
 
-const theme = createTheme({
-  palette: {
-    mode: "light",
-    primary: { main: "#004785" },
-    secondary: { main: "#93c01f" },
-    background: {
-      default: "#f5f5f5",
-      paper: "#ffffff",
-    },
-  },
-});
-
-const NavigationBar = () => (
+const NavigationBar = ({mode,toggleMode}) => (
   <AppBar position="static" color="primary">
     <Toolbar>
       <Typography variant="h6" sx={{ flexGrow: 1 }}>
@@ -42,6 +34,9 @@ const NavigationBar = () => (
       >
         Bids List
       </Button>
+      <IconButton onClick={toggleMode} color="inherit" aria-label="toggle theme">
+        {mode === "light" ? <Brightness4Icon /> : <Brightness7Icon />}
+      </IconButton>
     </Toolbar>
   </AppBar>
 );
@@ -54,22 +49,32 @@ const RouteConfig = () => (
   </Routes>
 );
 
-const ThemeConfig = ({ children }) => (
-  <ThemeProvider theme={theme}>
-    <CssBaseline />
-    {children}
-  </ThemeProvider>
-);
+const App = () => {
 
-function App() {
+  const getInitialMode = () => {
+    const saved = localStorage.getItem("mode");
+    if (saved === "light" || saved === "dark") return saved;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  };
+
+  const [mode, setMode] = useState(getInitialMode);
+
+      useEffect(() => {
+    localStorage.setItem("mode", mode);
+  }, [mode]);
+
+   const toggleMode = () => {
+    setMode((prev) => (prev === "light" ? "dark" : "light"));
+  };
+
   return (
-    <ThemeConfig>
+    <ThemeProvider theme={mode === "light" ? lightTheme : darkTheme}>
+      <CssBaseline />
       <Router>
-        <NavigationBar />
+        <NavigationBar mode={mode} toggleMode={toggleMode} />
         <RouteConfig />
       </Router>
-    </ThemeConfig>
+    </ThemeProvider>
   );
-}
-
-export default App;
+};
+export default App

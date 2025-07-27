@@ -24,7 +24,6 @@ export function sanitizeFilename(filename) {
 
 // Generate PDF from subcategories data
 export function generatePDF(subcategories, soNumber, homeownerName) {
-  console.log("generatePDF Input:", { subcategories, soNumber, homeownerName }); // Debug log
 
   // Validate input
   if (!subcategories || typeof subcategories !== "object") {

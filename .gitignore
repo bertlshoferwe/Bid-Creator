@@ -22,7 +22,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-# firebase setup files and assets
-src/firebase.js
-src/assets
+.env

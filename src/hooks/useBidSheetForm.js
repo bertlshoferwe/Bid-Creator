@@ -251,7 +251,6 @@ const initialSubcategories = [
 ];
 
 function useBidSheetForm() {
-  console.log("useBidSheetForm initialized"); // Debug
   const [homeownerName, setHomeownerName] = useState("");
   const [tab, setTab] = useState(0);
   const [subcategories, setSubcategories] = useState(initialSubcategories);
@@ -272,7 +271,6 @@ function useBidSheetForm() {
   const addItemInputRef = useRef(null);
 
   useEffect(() => {
-    console.log("subcategories:", subcategories); // Debug
     if (!db) {
       console.error("Firebase db is not initialized");
       setSaveFeedbackMessage("Firebase configuration error");
@@ -390,7 +388,6 @@ function useBidSheetForm() {
 
   const toggleAccordion = (category, sectionTitle) => {
     const key = getSectionKey(category, sectionTitle);
-    console.log(`toggleAccordion called: category=${category}, sectionTitle=${sectionTitle}, key=${key}`); // Debug
     setExpandedAccordions((prev) => ({
       ...prev,
       [key]: !prev[key],
@@ -399,7 +396,6 @@ function useBidSheetForm() {
 
   const toggleSectionEdit = (category, sectionTitle) => {
     const key = getSectionKey(category, sectionTitle);
-    console.log(`toggleSectionEdit called: category=${category}, sectionTitle=${sectionTitle}, key=${key}`); // Debug
     setEditingSections((prev) => ({
       ...prev,
       [key]: !prev[key],

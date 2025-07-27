@@ -21,7 +21,6 @@ const SectionAccordion = ({
   handleAddItemModal,
   handleDeleteItem,
 }) => {
-  console.log(`SectionAccordion rendering: ${category}`, sections); // Debug
 
   if (!sections || !Array.isArray(sections)) {
     console.error(`SectionAccordion: Invalid sections prop for ${category}`, sections);
@@ -40,17 +39,15 @@ const SectionAccordion = ({
             const sectionKey = getSectionKey(category, section.title);
             const isSectionEditing = !!editingSections[sectionKey];
             const isExpanded = !!expandedAccordions[sectionKey];
-            console.log(`Rendering section: ${section.title}, isExpanded: ${isExpanded}, key: ${sectionKey}`); // Debug
 
             return (
               <Accordion
                 key={sectionKey}
                 expanded={isExpanded}
                 onChange={() => {
-                  console.log(`Toggling accordion: ${category}, ${section.title}, key: ${sectionKey}`); // Debug
                   toggleAccordion(category, section.title);
                 }}
-                sx={{ width: "100%", boxShadow: 1 }}
+                sx={{ width: "100%", boxShadow: 4 }}
               >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography sx={{ flexGrow: 1, fontWeight: "medium" }}>
@@ -129,7 +126,6 @@ const SectionAccordion = ({
                       </Typography>
                     ) : (
                       section.items.map((item, iIdx) => {
-                        console.log(`Rendering item: ${item.label}, index: ${iIdx}`, item); // Debug
                         return (
                           <ItemInput
                             key={`${sectionKey}-${item.label}-${iIdx}`}

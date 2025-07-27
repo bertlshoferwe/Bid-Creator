@@ -1,5 +1,6 @@
 import React from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 const BidsTable = ({ bids, searchQuery, handleDeleteBid, handleOpenEditModal, handleDownloadPDF }) => {
   const filteredBids = bids.filter((bid) => {
@@ -14,10 +15,18 @@ const BidsTable = ({ bids, searchQuery, handleDeleteBid, handleOpenEditModal, ha
     return soNumber.includes(query) || homeownerName.includes(query) || plumberName.includes(query);
   });
 
+ const theme = useTheme();
+
   return (
     <TableContainer component={Paper}>
       <Table aria-label="Bids table">
-        <TableHead>
+        <TableHead
+          sx={{
+              position: "sticky",
+              zIndex: 1,
+              borderBottom: `10px solid ${theme.palette.background.card}`, // creates visual separation
+            }}
+          >
           <TableRow>
             <TableCell>SO#</TableCell>
             <TableCell>Homeowner Name</TableCell>

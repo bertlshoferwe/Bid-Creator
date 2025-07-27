@@ -12,7 +12,6 @@ const ItemInput = ({
   handleDeleteItem,
   currentCategory,
 }) => {
-  console.log(`ItemInput rendering: ${item.label}, item:`, item); // Debug
 
   const handleChange = (field, value) => {
     updateSubcategories((prev) => {

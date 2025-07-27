@@ -35,7 +35,7 @@ function BidsList() {
       <Box
         sx={{
           maxWidth: 1000,
-          backgroundColor: "white",
+          backgroundColor: "background.card",
           mx: "auto",
           px: 2,
           pt: 4,

@@ -23,7 +23,6 @@ const ContactSection = ({
   handleDeleteSection,
   handleAddItemModal,
 }) => {
-  console.log("ContactSection props:", { soNumber, sections, isEditing, expandedAccordions, editingSections }); // Debug
 
   if (!sections || !Array.isArray(sections)) {
     console.error("ContactSection: Invalid sections prop", sections);
@@ -53,17 +52,15 @@ const ContactSection = ({
             const sectionKey = getSectionKey("Contact", section.title);
             const isSectionEditing = !!editingSections[sectionKey];
             const isExpanded = !!expandedAccordions[sectionKey];
-            console.log(`Rendering section: ${section.title}, isExpanded: ${isExpanded}, key: ${sectionKey}`); // Debug
 
             return (
               <Accordion
                 key={sectionKey}
                 expanded={isExpanded}
                 onChange={() => {
-                  console.log(`Toggling accordion: Contact, ${section.title}, key: ${sectionKey}`); // Debug
                   toggleAccordion("Contact", section.title);
                 }}
-                sx={{ width: "100%", boxShadow: 1 }}
+                sx={{ width: "100%", boxShadow: 4 }}
               >
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography sx={{ flexGrow: 1, fontWeight: "medium" }}>
@@ -142,7 +139,6 @@ const ContactSection = ({
                       </Typography>
                     ) : (
                       section.items.map((item, iIdx) => {
-                        console.log(`Rendering item: ${item.label}, index: ${iIdx}`, item); // Debug
                         return (
                           <ItemInput
                             key={`${sectionKey}-${item.label}-${iIdx}`}

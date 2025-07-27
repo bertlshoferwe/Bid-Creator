@@ -16,7 +16,6 @@ function useBids() {
   const [feedbackType, setFeedbackType] = useState("success");
 
   useEffect(() => {
-    console.log("useBids initialized"); // Debug
     const fetchBids = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "bids"));
